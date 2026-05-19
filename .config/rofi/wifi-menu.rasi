@@ -1,0 +1,96 @@
+/**
+ * Tema de Rofi optimizado para Hyprland (Dos-D)
+ * Estilo: Minimalista, consistente con Waybar
+ */
+
+configuration {
+    show-icons: false;
+    display-dmenu: " ";
+}
+
+* {
+    /* Paleta de colores basada en tu configuración */
+    bg: #2b4252;           /* Fondo principal de tu Waybar */
+    bg-alt: #3b4252;       /* Gris de tus botones/módulos */
+    fg: #e5e9f0;           /* Texto claro */
+    accent: #5e81ac;       /* Azul de selección (el de tus workspaces) */
+    highlight-blue: #88c0d0; /* Azul claro para detalles */
+
+    background-color: transparent;
+    text-color: @fg;
+    font: "FiraCode Nerd Font 10";
+
+    /* Elimina el resaltado amarillo/naranja por defecto */
+    highlight: none;
+}
+
+window {
+    width: 320px;
+    location: northeast;
+    anchor: northeast;
+    x-offset: -15px;       /* Ajuste horizontal */
+    y-offset: 55px;        /* Ajuste vertical para colgar de la barra */
+
+    background-color: @bg;
+    border: 2px;
+    border-color: @bg-alt; /* Borde sutil para que no se pierda */
+    border-radius: 20px;   /* Mismo redondeo que tu Waybar */
+}
+
+mainbox {
+    background-color: transparent;
+    children: [ inputbar, listview ];
+    padding: 8px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius: 15px;
+    margin: 5px;
+    padding: 8px;
+    children: [ prompt, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @highlight-blue;
+    margin: 0 10px 0 5px;
+}
+
+entry {
+    placeholder: "Buscar...";
+    placeholder-color: #636f83;
+    text-color: @fg;
+}
+
+listview {
+    fixed-height: false;
+    lines: 7;
+    scrollbar: false;
+    spacing: 5px;
+    padding: 5px;
+}
+
+element {
+    padding: 8px;
+    border-radius: 12px;
+    background-color: transparent;
+    text-color: @fg;
+}
+
+/* Estado seleccionado (Aquí matamos el amarillo) */
+element selected {
+    background-color: @accent;
+    text-color: #ffffff;
+}
+
+/* Forzamos que el texto e iconos hereden el color del padre y no el del sistema */
+element-text, element-icon {
+    background-color: inherit;
+    text-color:       inherit;
+    vertical-align:   0.5;
+}
+
+element-text selected {
+    text-color: #ffffff;
+}

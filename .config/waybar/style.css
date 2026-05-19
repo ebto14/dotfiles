@@ -1,0 +1,153 @@
+/* ==========================================================================
+ *  WAYBAR CONFIGURATION STYLE - NORD FLOTANTE
+ *  ========================================================================== */
+
+* {
+    font-family: "FiraCode Nerd Font", "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+/* Fondo transparente para la barra base (permite el efecto flotante) */
+window#waybar {
+    background-color: rgba(0, 0, 0, 0);
+    color: #e5e9f0;
+}
+
+/*
+ *  Bloques contenedores principales (Islas flotantes)
+ *  Márgenes superiores y laterales para evitar que peguen al borde de la pantalla
+ */
+.modules-left,
+.modules-center,
+.modules-right {
+    background-color: #242933; /* Gris oscuro Nord profundo */
+    border: 1px solid #3b4252;
+    border-radius: 15px;
+    padding: 4px 14px;
+    margin-top: 8px;
+    margin-bottom: 2px;
+}
+
+.modules-left {
+    margin-left: 12px;
+}
+
+.modules-right {
+    margin-right: 12px;
+}
+
+/* ==========================================================================
+ *  WORKSPACES (SINTAXIS ESTRICTA GTK)
+ *  ========================================================================== */
+
+#workspaces {
+padding: 0 4px;
+}
+
+#workspaces button {
+color: #4c566a; /* Color apagado si está vacío o inactivo */
+padding: 0 8px;
+background: transparent;
+box-shadow: none;
+text-shadow: none;
+}
+
+#workspaces button.visible {
+color: #d8dee9;
+}
+
+#workspaces button.active {
+color: #88c0d0; /* Cyan brillante Nord para el active */
+font-size: 14px;
+font-weight: bold;
+}
+
+#workspaces button.urgent {
+color: #bf616a; /* Rojo alerta si hay actividad urgente */
+}
+
+#workspaces button:hover {
+color: #81a1c1;
+background: transparent;
+box-shadow: none;
+}
+
+/* ==========================================================================
+ *  MÓDULOS INDIVIDUALES
+ *  ========================================================================== */
+
+/* Logo / Launcher */
+#custom-logo {
+color: #1793d1; /* Azul Arch Linux */
+font-size: 15px;
+padding-right: 12px;
+border-radius: 8px;
+}
+
+#custom-logo:hover {
+color: #63cdff;
+background-color: rgba(23, 147, 209, 0.15); /* Iluminación sutil */
+}
+
+/* Hardware Hardware */
+#cpu {
+color: #a3be8c; /* Verde */
+padding: 0 6px;
+}
+
+#memory {
+color: #ebcb8b; /* Amarillo suave */
+padding: 0 6px;
+}
+
+/* Sistema e Iconos de Red/Audio */
+#tray {
+padding: 0 10px;
+}
+
+#bluetooth {
+color: #81a1c1; /* Azul escandinavo */
+padding: 0 6px;
+}
+
+#network {
+color: #b48ead; /* Púrpura */
+padding: 0 6px;
+}
+
+#network.disconnected {
+color: #bf616a;
+}
+
+#pulseaudio {
+color: #8fbcbb; /* Turquesa */
+padding: 0 6px;
+}
+
+#pulseaudio.muted {
+color: #4c566a;
+}
+
+/* Reloj y Botón de Apagado */
+#clock {
+color: #e5e9f0;
+font-weight: bold;
+padding: 0 8px;
+}
+
+#custom-power {
+color: #bf616a; /* Rojo Nord vibrante */
+font-size: 14px;
+padding: 0 8px;
+border-radius: 8px;
+margin-left: 4px;
+}
+
+#custom-power:hover {
+color: #d08770; /* Naranja al pasar el mouse */
+background-color: rgba(191, 97, 106, 0.15); /* Iluminación sutil */
+}

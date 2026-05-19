@@ -1,0 +1,22 @@
+enable_audio_bell no
+
+include color.ini
+
+font_family      Roboto
+font_size 14
+
+disable_ligatures never
+
+url_color #6lafef
+
+url_style curly
+
+map crt+left neighboring_window left
+map crt+right neighboring_window right
+map crt+up neighboring_window up
+map crt+down neighboring_window down
+
+
+
+shell zsh
+
