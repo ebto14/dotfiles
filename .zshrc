@@ -59,6 +59,42 @@ alias l='lsd --group-dirs=first'
 alias lla='lsd -lha --group-dirs=first'
 alias ls='lsd --group-dirs=first'
 alias cat='bat'
+# Función para actualizar mis dotfiles en GitHub con un solo comando
+sync-dotfiles() {
+    echo "🔄 Iniciando sincronización de dotfiles..."
+    
+    # 1. Entrar a la carpeta del repositorio
+    cd ~/dotfiles || return
+    
+    # 2. Copiar los archivos más recientes desde tu sistema a la carpeta de Git
+    echo "📁 Copiando archivos de configuración actuales..."
+    
+    # Copiar carpetas de .config
+    for app in kitty fastfetch gtk-4.0 gtk-3.0 hypr kvantum rofi swaync swaylock thunar waybar waypaper; do
+        if [ -d "$HOME/.config/$app" ]; then
+            cp -r "$HOME/.config/$app" .config/
+        fi
+    done
+    
+    # Copiar archivos de Zsh
+    [ -f "$HOME/.zshrc" ] && cp "$HOME/.zshrc" .
+    [ -f "$HOME/.p10k.zsh" ] && cp "$HOME/.p10k.zsh" .
+
+    # 3. Flujo de Git para subir los cambios
+    echo "🚀 Subiendo cambios a GitHub..."
+    git add .
+    
+    # El commit llevará la fecha y hora exacta de la actualización
+    git commit -m "Actualización automática: $(date '+%Y-%m-%d %H:%M:%S')"
+    
+    # Subida normal (ya no necesitas usar --force porque el historial ya está alineado)
+    git push origin main
+    
+    echo "✅ ¡Dotfiles actualizados con éxito!"
+    
+    # Volver a la carpeta donde estabas inicialmente
+    cd - > /dev/null
+}
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
