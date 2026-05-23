@@ -1,153 +1,112 @@
-/* ==========================================================================
- *  WAYBAR CONFIGURATION STYLE - NORD FLOTANTE
- *  ========================================================================== */
-
+/* Estilo Base */
 * {
-    font-family: "FiraCode Nerd Font", "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 13px;
-    font-weight: 600;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 11px;
+    font-weight: bold;
     border: none;
-    border-radius: 0;
-    transition: all 0.3s ease;
 }
 
-/* Fondo transparente para la barra base (permite el efecto flotante) */
-window#waybar {
-    background-color: rgba(0, 0, 0, 0);
-    color: #e5e9f0;
-}
-
+/* La barra entera como píldora flotante */
+#waybar {
+background-color: rgba(30, 30, 46, 0.75);
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 20px;
+color: #cdd6f4;
 /*
- *  Bloques contenedores principales (Islas flotantes)
- *  Márgenes superiores y laterales para evitar que peguen al borde de la pantalla
+ *      Quitamos el margin de acá.
+ *      Hyprland y Waybar manejan la flotación de forma nativa desde el config.jsonc
  */
-.modules-left,
-.modules-center,
-.modules-right {
-    background-color: #242933; /* Gris oscuro Nord profundo */
-    border: 1px solid #3b4252;
-    border-radius: 15px;
-    padding: 4px 14px;
-    margin-top: 8px;
-    margin-bottom: 2px;
 }
 
-.modules-left {
-    margin-left: 12px;
-}
-
-.modules-right {
-    margin-right: 12px;
-}
-
-/* ==========================================================================
- *  WORKSPACES (SINTAXIS ESTRICTA GTK)
- *  ========================================================================== */
-
-#workspaces {
-padding: 0 4px;
-}
-
-#workspaces button {
-color: #4c566a; /* Color apagado si está vacío o inactivo */
-padding: 0 8px;
-background: transparent;
-box-shadow: none;
-text-shadow: none;
-}
-
-#workspaces button.visible {
-color: #d8dee9;
-}
-
-#workspaces button.active {
-color: #88c0d0; /* Cyan brillante Nord para el active */
-font-size: 14px;
-font-weight: bold;
-}
-
-#workspaces button.urgent {
-color: #bf616a; /* Rojo alerta si hay actividad urgente */
-}
-
-#workspaces button:hover {
-color: #81a1c1;
-background: transparent;
-box-shadow: none;
-}
-
-/* ==========================================================================
- *  MÓDULOS INDIVIDUALES
- *  ========================================================================== */
-
-/* Logo / Launcher */
-#custom-logo {
-color: #1793d1; /* Azul Arch Linux */
-font-size: 15px;
-padding-right: 12px;
-border-radius: 8px;
-}
-
-#custom-logo:hover {
-color: #63cdff;
-background-color: rgba(23, 147, 209, 0.15); /* Iluminación sutil */
-}
-
-/* Hardware Hardware */
-#cpu {
-color: #a3be8c; /* Verde */
-padding: 0 6px;
-}
-
-#memory {
-color: #ebcb8b; /* Amarillo suave */
-padding: 0 6px;
-}
-
-/* Sistema e Iconos de Red/Audio */
-#tray {
-padding: 0 10px;
-}
-
-#bluetooth {
-color: #81a1c1; /* Azul escandinavo */
-padding: 0 6px;
-}
-
-#network {
-color: #b48ead; /* Púrpura */
-padding: 0 6px;
-}
-
-#network.disconnected {
-color: #bf616a;
-}
-
-#pulseaudio {
-color: #8fbcbb; /* Turquesa */
-padding: 0 6px;
-}
-
-#pulseaudio.muted {
-color: #4c566a;
-}
-
-/* Reloj y Botón de Apagado */
-#clock {
-color: #e5e9f0;
-font-weight: bold;
-padding: 0 8px;
-}
-
+/* Estilo unificado para los módulos */
+#custom-menu,
+#clock,
+#cpu,
+#memory,
+#pulseaudio,
+#bluetooth,
+#network,
+#tray,
+#custom-mi_script1,
 #custom-power {
-color: #bf616a; /* Rojo Nord vibrante */
+padding: 0 10px;
+background: transparent;
+}
+
+/* Líneas divisorias estéticas flotantes (Alineadas con los nuevos nombres) */
+#custom-menu,
+#cpu,
+#memory,
+#pulseaudio,
+#bluetooth,
+#network,
+#custom-mi_script1,
+#clock {
+border-right: 1px solid rgba(255, 255, 255, 0.15);
+margin-top: 6px;
+margin-bottom: 6px;
+}
+
+/* Botón del Menú (Izquierda) - Margen para salvar la curva izquierda */
+#custom-menu {
+color: #89b4fa;
 font-size: 14px;
-padding: 0 8px;
-border-radius: 8px;
+padding-left: 14px;
 margin-left: 4px;
 }
 
-#custom-power:hover {
-color: #d08770; /* Naranja al pasar el mouse */
-background-color: rgba(191, 97, 106, 0.15); /* Iluminación sutil */
+/* Zona de Workspaces (Tu setup Pac-Man) */
+#workspaces {
+background-color: rgba(0, 0, 0, 0.3);
+border-radius: 20px;
+margin: 4px 10px 4px 6px;
+padding: 0 8px;
+}
+
+#workspaces button {
+padding: 0 6px;
+background: transparent;
+color: #6c7086; /* Color gris apagado para los puntos VACÍOS (así no distraen) */
+transition: all 0.2s ease;
+}
+
+/* Color exclusivo para escritorios ocupados (Fantasmas) */
+#workspaces button.occupied {
+color: #89b4fa; /* El azul Catppuccin brillante para los fantasmas */
+}
+
+/* Color exclusivo para el escritorio activo (Pac-Man) */
+#workspaces button.active {
+color: #f9e2af; /* Amarillo brillante */
+font-size: 13px;
+}
+
+#workspaces button.urgent {
+color: #f38ba8;
+}
+
+/* Título de la ventana activa */
+#window {
+color: #a6e3a1;
+font-weight: normal;
+background: transparent;
+padding-left: 5px;
+}
+
+/* Estilos de color para los módulos */
+#custom-mi_script1 { color: #89dceb; }
+#bluetooth { color: #89b4fa; }
+#network { color: #a6e3a1; }
+#cpu { color: #fab387; }
+#memory { color: #cba6f7; }
+#pulseaudio { color: #f9e2af; }
+#clock { color: #f2cdcd; }
+#tray { padding-right: 14px; }
+
+/* Botón de Apagado (Derecha) - Separación de la curva derecha */
+#custom-power {
+color: #f38ba8;
+font-size: 13px;
+margin-right: 14px;
+padding-right: 4px;
 }

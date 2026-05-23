@@ -1,96 +1,108 @@
-/**
- * Tema de Rofi optimizado para Hyprland (Dos-D)
- * Estilo: Minimalista, consistente con Waybar
- */
-
-configuration {
-    show-icons: false;
-    display-dmenu: " ";
-}
+/* =========================================================================
+ *  Rofi Theme - Estilo unificado con Waybar (Floating Island / Píldora)
+ *  ========================================================================= */
 
 * {
-    /* Paleta de colores basada en tu configuración */
-    bg: #2b4252;           /* Fondo principal de tu Waybar */
-    bg-alt: #3b4252;       /* Gris de tus botones/módulos */
-    fg: #e5e9f0;           /* Texto claro */
-    accent: #5e81ac;       /* Azul de selección (el de tus workspaces) */
-    highlight-blue: #88c0d0; /* Azul claro para detalles */
+    /* Colores basados en tu configuración de Waybar */
+    bg-color:            rgba(30, 30, 46, 0.75);     /* Fondo Waybar */
+    text-color:          #cdd6f4;                    /* Texto claro (Catppuccin Mocha) */
+    accent-color:        #cba6f7;                    /* Mauve / Color destacado */
+    selected-bg:         rgba(255, 255, 255, 0.1);    /* Fondo al pasar el cursor */
 
-    background-color: transparent;
-    text-color: @fg;
-    font: "FiraCode Nerd Font 10";
-
-    /* Elimina el resaltado amarillo/naranja por defecto */
-    highlight: none;
+    font:                "JetBrainsMono Nerd Font Bold 11";
+    background-color:    transparent;
 }
 
 window {
-    width: 320px;
-    location: northeast;
-    anchor: northeast;
-    x-offset: -15px;       /* Ajuste horizontal */
-    y-offset: 55px;        /* Ajuste vertical para colgar de la barra */
+    background-color:    @bg-color;
+    border:              1px;
+    border-color:        rgba(255, 255, 255, 0.1);
+    border-radius:       20px;
+    width:               400px;
+    padding:             15px;
 
-    background-color: @bg;
-    border: 2px;
-    border-color: @bg-alt; /* Borde sutil para que no se pierda */
-    border-radius: 20px;   /* Mismo redondeo que tu Waybar */
+    /* POSICIÓN: Esquina superior derecha */
+    anchor:              northeast;
+    location:            northeast;
+    x-offset:            -20px;
+    y-offset:            55px;
 }
 
 mainbox {
-    background-color: transparent;
-    children: [ inputbar, listview ];
-    padding: 8px;
+    children:            [ inputbar, listview ];
+    spacing:             10px;
 }
 
+/* Barra de búsqueda / Título */
 inputbar {
-    background-color: @bg-alt;
-    border-radius: 15px;
-    margin: 5px;
-    padding: 8px;
-    children: [ prompt, entry ];
+    background-color:    rgba(0, 0, 0, 0.3);
+    border-radius:       12px;
+    padding:             8px 12px;
+    children:            [ prompt, entry ];
+    spacing:             10px;
 }
 
 prompt {
-    background-color: transparent;
-    text-color: @highlight-blue;
-    margin: 0 10px 0 5px;
+    text-color:          @accent-color;
 }
 
 entry {
-    placeholder: "Buscar...";
-    placeholder-color: #636f83;
-    text-color: @fg;
+    text-color:          @text-color;
+    placeholder:         "Buscar...";
+    placeholder-color:   rgba(205, 214, 244, 0.3);
 }
 
+/* Lista de redes / Dispositivos */
 listview {
-    fixed-height: false;
-    lines: 7;
-    scrollbar: false;
-    spacing: 5px;
-    padding: 5px;
+    fixed-height:        false;
+    dynamic:             true;
+    lines:               8;
+    scrollbar:           false;
+    spacing:             5px;
 }
 
+/* Estructura base de las filas */
 element {
-    padding: 8px;
-    border-radius: 12px;
-    background-color: transparent;
-    text-color: @fg;
+    padding:             8px 12px;
+    border-radius:       10px;
 }
 
-/* Estado seleccionado (Aquí matamos el amarillo) */
-element selected {
-    background-color: @accent;
-    text-color: #ffffff;
+/* =========================================================================
+ *  COMPORTAMIENTO DE FILAS (Reseteo total del amarillo por defecto)
+ *  ========================================================================= */
+
+/* Filas normales y alternas en reposo: 100% transparentes */
+element normal.normal,
+element alternate.normal,
+element normal.active,
+element alternate.active {
+    background-color:    transparent;
 }
 
-/* Forzamos que el texto e iconos hereden el color del padre y no el del sistema */
-element-text, element-icon {
-    background-color: inherit;
-    text-color:       inherit;
-    vertical-align:   0.5;
+/* Filas cuando están seleccionadas (Teclado o Ratón) */
+element selected.normal,
+element selected.active {
+    background-color:    @selected-bg;
+    border:              1px;
+    border-color:        rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================================================
+ *  TEXTOS E ICONOS
+ *  ========================================================================= */
+
+element-text {
+    background-color:    transparent;
+    text-color:          @text-color;
+    vertical-align:      0.5;
 }
 
 element-text selected {
-    text-color: #ffffff;
+    text-color:          @accent-color;
+}
+
+element-icon {
+    background-color:    transparent;
+    size:                20px;
+    padding:             0 10px 0 0;
 }
