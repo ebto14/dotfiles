@@ -1,0 +1,108 @@
+/* =========================================================================
+ *  Rofi Theme - Estilo unificado con Waybar (Floating Island / Píldora)
+ *  ========================================================================= */
+
+* {
+    /* Colores basados en tu configuración de Waybar */
+    bg-color:            rgba(30, 30, 46, 0.75);     /* Fondo Waybar */
+    text-color:          #cdd6f4;                    /* Texto claro (Catppuccin Mocha) */
+    accent-color:        #cba6f7;                    /* Mauve / Color destacado */
+    selected-bg:         rgba(255, 255, 255, 0.1);    /* Fondo al pasar el cursor */
+
+    font:                "JetBrainsMono Nerd Font Bold 11";
+    background-color:    transparent;
+}
+
+window {
+    background-color:    @bg-color;
+    border:              1px;
+    border-color:        rgba(255, 255, 255, 0.1);
+    border-radius:       20px;
+    width:               400px;
+    padding:             15px;
+
+    /* POSICIÓN: Esquina superior derecha */
+    anchor:              northeast;
+    location:            northeast;
+    x-offset:            -20px;
+    y-offset:            55px;
+}
+
+mainbox {
+    children:            [ inputbar, listview ];
+    spacing:             10px;
+}
+
+/* Barra de búsqueda / Título */
+inputbar {
+    background-color:    rgba(0, 0, 0, 0.3);
+    border-radius:       12px;
+    padding:             8px 12px;
+    children:            [ prompt, entry ];
+    spacing:             10px;
+}
+
+prompt {
+    text-color:          @accent-color;
+}
+
+entry {
+    text-color:          @text-color;
+    placeholder:         "Buscar...";
+    placeholder-color:   rgba(205, 214, 244, 0.3);
+}
+
+/* Lista de redes / Dispositivos */
+listview {
+    fixed-height:        false;
+    dynamic:             true;
+    lines:               8;
+    scrollbar:           false;
+    spacing:             5px;
+}
+
+/* Estructura base de las filas */
+element {
+    padding:             8px 12px;
+    border-radius:       10px;
+}
+
+/* =========================================================================
+ *  COMPORTAMIENTO DE FILAS (Reseteo total del amarillo por defecto)
+ *  ========================================================================= */
+
+/* Filas normales y alternas en reposo: 100% transparentes */
+element normal.normal,
+element alternate.normal,
+element normal.active,
+element alternate.active {
+    background-color:    transparent;
+}
+
+/* Filas cuando están seleccionadas (Teclado o Ratón) */
+element selected.normal,
+element selected.active {
+    background-color:    @selected-bg;
+    border:              1px;
+    border-color:        rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================================================
+ *  TEXTOS E ICONOS
+ *  ========================================================================= */
+
+element-text {
+    background-color:    transparent;
+    text-color:          @text-color;
+    vertical-align:      0.5;
+}
+
+element-text selected {
+    text-color:          @accent-color;
+}
+
+element-icon {
+    background-color:    transparent;
+    size:                20px;
+    padding:             0 10px 0 0;
+}

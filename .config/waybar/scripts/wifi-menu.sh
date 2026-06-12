@@ -1,85 +1,121 @@
 #!/bin/bash
 
-# 1. Obtener lista de Wi-Fi usando ':' como separador nativo.
-# Eliminamos el 'rescan' para evitar que NetworkManager dispare notificaciones del sistema.
-wifi_list=$(nmcli -t -f "SSID,SECURITY,BARS" device wifi list | grep -v '^:')
+# =========================
+# SPEED OPTIMIZATION
+# =========================
+export NM_CLIENT_TIMEOUT=3
 
-# 2. Obtener lista de VPNs/Wireguard
-vpn_list=$(nmcli -t -f NAME,TYPE connection show | grep -E ":vpn|:wireguard" | cut -d: -f1)
+# =========================
+# WIFI LIST (FAST MODE)
+# =========================
+wifi_list=$(nmcli -t -f SSID,SECURITY,BARS device wifi list --rescan no | grep -v '^:' | sort -u)
 
-# 3. Formatear lista de Wi-Fi para Rofi (Filtrando duplicados)
-formatted_wifi=""
-declare -A seen_ssids # Array asociativo para rastrear redes ya agregadas
+# =========================
+# VPN LIST
+# =========================
+vpn_list=$(nmcli -t -f NAME,TYPE connection show | awk -F: '$2=="vpn" || $2=="wireguard"{print $1}')
 
-while IFS=':' read -r ssid security bars; do
-    if [ -n "$ssid" ]; then
-        # Si ya procesamos este SSID en este ciclo, lo ignoramos (mantiene la primera coincidencia, que suele ser la de mejor señal)
-        if [[ -n "${seen_ssids[$ssid]}" ]]; then
-            continue
-        fi
-        seen_ssids[$ssid]=1
+active_vpn=$(nmcli -t -f NAME,TYPE connection show --active | awk -F: '$2=="vpn" || $2=="wireguard"{print $1}')
 
-        [ "$security" == " " ] || [ -z "$security" ] && security="Abierta"
-        formatted_wifi+="$bars  $ssid  ($security)\n"
-    fi
-done <<< "$wifi_list"
+current_ssid=$(nmcli -t -f ACTIVE,SSID dev wifi | awk -F: '$1=="yes"{print $2}')
 
-# 4. Formatear lista de VPNs e identificar cuáles están activas
-formatted_vpns=""
-active_connections=$(nmcli -t -f NAME connection show --active)
+# =========================
+# BUILD MENU
+# =========================
+menu=""
 
-while read -r vpn_name; do
-    if [ -n "$vpn_name" ]; then
-        if echo "$active_connections" | grep -qxF "$vpn_name"; then
-            formatted_vpns+="󰖂  ● $vpn_name  (VPN Conectada)\n"
-        else
-            formatted_vpns+="󰖂    $vpn_name  (VPN)\n"
-        fi
-    fi
-done <<< "$vpn_list"
-
-# Combinar listas limpiando líneas vacías
-menu_list=$(echo -e "${formatted_vpns}${formatted_wifi}" | grep -v '^[[:space:]]*$')
-
-# 5. Lanzar Rofi directamente
-chosen_item=$(echo -e "$menu_list" | rofi -dmenu -i -p "Redes/VPN" -config ~/.config/rofi/wifi-menu.rasi)
-
-if [ -z "$chosen_item" ]; then
-    exit 0
+# =========================
+# ACTIVE VPN (TOP GLOBAL)
+# =========================
+if [ -n "$active_vpn" ]; then
+    menu+="━━ VPN ACTIVA ━━\n"
+    menu+="󰖂  ● $active_vpn\n\n"
 fi
 
-# 6. Procesar Selección de VPN
-if [[ "$chosen_item" == *"(VPN"* ]]; then
-    vpn_name=$(echo "$chosen_item" | sed -E 's/^󰖂  (● )?//' | sed -E 's/  \(VPN.*\)$//')
+menu+="━━ WIFI ━━\n"
 
-    if echo "$active_connections" | grep -qxF "$vpn_name"; then
-        notify-send "VPN" "Desconectando de: $vpn_name"
-        nmcli connection down id "$vpn_name" && notify-send "VPN" "Desconectado de $vpn_name"
+# =========================
+# WIFI SECTION
+# =========================
+declare -A seen_ssid
+
+while IFS=':' read -r ssid security bars; do
+    [ -z "$ssid" ] && continue
+
+    if [[ -n "${seen_ssid[$ssid]}" ]]; then
+        continue
+    fi
+    seen_ssid[$ssid]=1
+
+    if [[ "$ssid" == "$current_ssid" ]]; then
+        menu+="  ● $ssid (Conectado)\n"
     else
-        notify-send "VPN" "Conectando a: $vpn_name..."
-        nmcli connection up id "$vpn_name" && notify-send "VPN" "Conectado a $vpn_name" || notify-send "VPN" "Error al conectar a $vpn_name"
+        if [[ "$security" == *"WPA"* ]]; then
+            menu+="    $ssid (Seguro)\n"
+        else
+            menu+="    $ssid (Abierta)\n"
+        fi
     fi
 
-# 7. Procesar Selección de Wi-Fi
+done <<< "$wifi_list"
+
+# =========================
+# VPN SECTION (DISPONIBLES)
+# =========================
+menu+="\n━━ VPN DISPONIBLES ━━\n"
+
+while read -r vpn_name; do
+    [ -z "$vpn_name" ] && continue
+
+    # skip active vpn (already shown on top)
+    echo "$active_vpn" | grep -qxF "$vpn_name" && continue
+
+    menu+="󰖂    $vpn_name\n"
+done <<< "$vpn_list"
+
+# =========================
+# ROFI MENU
+# =========================
+chosen=$(echo -e "$menu" | rofi -dmenu -i -p "Redes / VPN" -config ~/.config/rofi/network.rasi)
+
+[ -z "$chosen" ] && exit 0
+
+# =========================
+# VPN TOGGLE
+# =========================
+if [[ "$chosen" == *"󰖂"* ]]; then
+
+    vpn_name=$(echo "$chosen" | sed -E 's/^󰖂  ● //; s/^󰖂    //')
+
+    if echo "$active_vpn" | grep -qxF "$vpn_name"; then
+        notify-send "VPN" "Desconectando $vpn_name"
+        nmcli connection down id "$vpn_name"
+    else
+        notify-send "VPN" "Conectando $vpn_name"
+        nmcli connection up id "$vpn_name"
+    fi
+
+# =========================
+# WIFI CONNECT
+# =========================
 else
-    # Extraer el SSID limpiando iconos iniciales y formato final
-    ssid=$(echo "$chosen_item" | sed -E 's/^[^ ]+  //' | sed -E 's/  \([^)]+\)$//')
+    ssid=$(echo "$chosen" | sed -E 's/^[^ ]+  ● //; s/^[^ ]+    //; s/ \(.*\)//')
 
     if nmcli -t -f NAME connection show --active | grep -qxF "$ssid"; then
-        notify-send "WiFi" "Ya estás conectado a $ssid"
+        notify-send "WiFi" "Ya conectado a $ssid"
         exit 0
     fi
 
-    if [[ "$chosen_item" == *"(Abierta)"* ]]; then
-        nmcli device wifi connect "$ssid" && notify-send "WiFi" "Conectado a $ssid"
+    if [[ "$chosen" == *"(Abierta)"* ]]; then
+        nmcli device wifi connect "$ssid" && notify-send "WiFi" "Conectado $ssid"
     else
         if nmcli connection show | grep -qxF "$ssid"; then
-            nmcli connection up id "$ssid" && notify-send "WiFi" "Conectado a $ssid"
+            nmcli connection up id "$ssid" && notify-send "WiFi" "Conectado $ssid"
         else
-            pass=$(rofi -dmenu -p "Password para $ssid: " -password -config ~/.config/rofi/wifi-menu.rasi)
+            pass=$(rofi -dmenu -p "Password $ssid:" -password -config ~/.config/rofi/network.rasi)
             [ -z "$pass" ] && exit 0
 
-            nmcli device wifi connect "$ssid" password "$pass" && notify-send "WiFi" "Conectado a $ssid" || notify-send "WiFi" "Error de autenticación"
+            nmcli device wifi connect "$ssid" password "$pass" && notify-send "WiFi" "Conectado $ssid"
         fi
     fi
 fi

@@ -1,0 +1,7 @@
+configuration {
+    show-icons: true;
+    font: "JetBrainsMono Nerd Font 11";
+    drun-display-format: "{name}";
+}
+
+@theme "~/.config/rofi/network.rasi"
